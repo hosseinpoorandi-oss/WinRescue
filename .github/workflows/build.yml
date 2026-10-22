@@ -1,12 +1,33 @@
 name: build-iso
-on: workflow_dispatch
+
+on:
+  workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - run: sudo bash build.sh
-      - uses: actions/upload-artifact@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            live-build \
+            debootstrap \
+            squashfs-tools \
+            xorriso \
+            isolinux \
+            syslinux \
+            sudo
+
+      - name: Run build script
+        run: sudo bash ./build.sh
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
         with:
           name: WinRescue-ISO
           path: |
